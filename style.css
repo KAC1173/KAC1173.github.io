@@ -1,56 +1,37 @@
 body{
-    background-color: black;
-    color: white;
+    margin: 0;
+    background-color: #1a1919;
+    color: rgb(199, 199, 199);
 }
-#buildings{
-    
+/*navigation*/
+
+#info{
+    width: 30%;
+    float:left;
+}
+#economy{
+    width: 60%;
     float:right;
-    width:60%;
 }
 #tab{
-    
-    float:left;
-
-}
-.building1{
-    border:3px grey solid;
-    padding: 10px;
-    width:46.922%;
     float:left;
 }
-.building2{
-    border:3px grey solid;
-    padding: 10px;
-    width:46.922%;
-    height:50%;
-    float:right;
-}
-
-#industry{
-    float:left;
-    border:3px rgb(122, 75, 75) solid;
-    width:45%;
-}
-#inf{
-    border:3px grey solid;
-    padding: 10px;
-    float: left;
-    text-align: center;
-    width:20%;
-}
-#buildings{
-    
-    float:right;
-}
-ul {
+#mainNavigation{
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #333333;
-  }
-  
-  li {
+    margin-bottom: 10px;
+}
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}  
+li{
     float: left;
     display: block;
     color: white;
@@ -58,7 +39,50 @@ ul {
     padding: 16px;
     text-decoration: none;
   }
-  
-  li:hover {
+#nav{
+    width:40%;
+    float:left;
+}
+li:hover{
     background-color: #111111;
-  }
+    cursor: pointer;
+}
+input[type=button]{
+    border-radius: 5px;
+    border:none;
+    margin:2px;
+    color: rgb(180, 170, 170);
+    background-color: #333030;
+}
+input[type=button]:hover{
+    background-color: #747474;
+    color: rgb(180, 170, 170);
+    cursor: pointer;
+}
+/*buildings*/
+/*#buildings{
+    float:right;
+    width: 60%;
+}*/
+.option{
+    float:left;
+    /*border: 3px grey solid;*/
+    width:49.25%;
+    margin: 4px;
+}
+/*tech*/
+#interactions{
+    float:left;
+}
+#techs{
+    float:right;
+    width: 60%;
+}
+.tech{
+    float:left;
+    border: 3px grey solid;
+    width:49.25%;
+}
+.selected{ 
+    background-color: #111111;
+}
