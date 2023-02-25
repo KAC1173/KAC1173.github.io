@@ -1,106 +1,159 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="java.js"></script>
     <title>Document</title>
 </head>
 <body>
 <div id="mainNavigation">
-  <ul>
-    <li onClick="myFunction(1)">Ekonomia</li>
-    <li onClick="myFunction(2)">nr2</li></ul>
-    <li onClick="typesBuildings(1)">people</li>
-    <li onClick="typesBuildings(2)">industry</li>
-    <li onClick="typesBuildings(3)">military</li>
+  <ul id="nav">
+    <li id="nav_1" class="navButton selected">Ekonomia</li>
+    <li id="nav_2" class="navButton">Technology</li>
+    <li id="nav_3" class="navButton">Warfare</li>
+  </ul>
+  <ul id="ecoNav">
+    <li id="bud_1" class="navButton selected">social</li>
+    <li id="bud_2" class="navButton">industry</li>
+    <li id=bud_3 class="navButton">military</li>
   </ul>
 </div>
-<div id="economy">
-  <div id="inf">
-    <div id="money">0gl</div><div id="income">income</div>
-    <div id="population"></div>
-    <div id="freepops"></div>
-    <div id="army"></div>
-    
-    <input type="button" value="Attack!!" onclick="defense(random()*(1000-100)-100,0.2)"><br>
-  </div>
-  
+<div id="info">
+  <div id="money" class="InfAll"><span id="m_total">0Gl</span><span id="m_income"> 0Gl per day</span></div> <!-- Zawsze widoczne -->
+  <div id="population" class="InfAll">0/0 pops</div><!--zawsze widoczne-->
+  <div id="freepops" class="InfEco">0 freepops</div><!--economy-->
+  <div id="weins"  class="InfEco">0 resorse weins</div> <!--economy-->
+  <div id="ores"  class="InfEco">0 ores</div><!--economy-->
+  <div id="techpoints"  class="InfTech" style="display:none;"><span id="tp_total">0 Techpoints</span><br><span id="tp_income">0 Techpoints per day</span></div>  <!--tech--> 
+  <div id="terain"  class="InfWar"style="display:none;"></div><!--warfare-->
+</div>
+<!--------------------Economy-------------------->
+<div id="economy" class="type">
   <div id="buildings">
-    <div id="types">
-    </div>
+    <!--------------social-------------->
     <div id="people">
-      <div id="farm" class="building1">
-        <b>House</b><br>
-        Every farms gives you additional gold per day but it needs pops to work at it, it costs 200Gl 20 free pops<br>
-        <input type="button" value="Build" onclick="Build(1)"><br>
-        Demolishing a bulding gives you 40% amount of money that you pay for it.<br>
-        <input type="button" value="Demolish" onclick="Demolish(1)">
-      </div>
-      
-      <div id="house" class="building2">
+      <div id="house" class="option">
         <b>House</b><br>
         Every house additional 25 max population, but be aware, it costs 100Gl and 1 gl per day to mentain<br>
-        <input type="button" value="Build" onclick="Build(2)"><br>
-        Demolishing a bulding gives you 40% amount of money that you pay for it.<br>
-        <input type="button" value="Demolish" onclick="Demolish(2)">
+        <input type="button" value="Build" onclick="Build(2)"><input type="button" value="Demolish" onclick="Demolish(2)"><br>
+      </div>
+      <div id="liblary" class="option"style="display:none;">
+        <b>Liblary</b><br>
+        For every 100pops you can build 1 liblary, it cost 1000Gl and 2Gl to mentain<br>
+        It gives you additional 4 TP per day, and improwes your people lives<br>
+        <input type="button" value="Build" onclick="Build(9)"><input type="button" value="Demolish" onclick="Demolish(9)"><br>
+      </div>
+      <div id="HugeHouse" class="option"style="display:none;">
+        <b>Huge house</b><br>
+        Every house additional 70 max population, it costs 200Gl and 2 gl per day to mentain<br>
+        <input type="button" value="Build" onclick="Build(10)"><input type="button" value="Demolish" onclick="Demolish(10)"><br>
       </div>
     </div>
-    <div id="industrial" style="display: none;">
-      <div id="mine" class="building1">
+    <!--------------indutry-------------->
+    <div id="industry" class="type"style="display:none;">      
+      <div id="farm" class="option">
+        <b>Farm</b><br>
+        Every farms gives you additional gold per day but it needs pops to work at it, it costs 200Gl 20 free pops<br>
+        <input type="button" value="Build" onclick="Build(1)"><input type="button" value="Demolish" onclick="Demolish(1)">
+      </div>
+      <div id="mine"class="option"style="display:none;">
         <b>Mine</b><br>
         To build a mine you have to have a resorce wein (you can get it by concwest), it costs 500Gl and 50 free pops.<br>
         Mines give you additional 7 gold per day by exporting ore<br>
-        <input type="button" value="Build" onclick="Build(3)"><br>
-        Demolishing a bulding gives you 40% amount of money that you pay for it.<br>
-        <input type="button" value="Demolish" onclick="Demolish(3)">
+        <input type="button" value="Build" onclick="Build(3)"><input type="button" value="Demolish" onclick="Demolish(3)">
       </div>
-      <div id="metalwork" class="building2">
+      <div id="stoneworks"class="option"style="display:none;">
+        <b>Stoneworks</b><br>
+        We can use theres hills to set up our mine and workshops nearby. This would cost 2250Gl and would need resorse wein.<br>
+        Stoneworks give you additional 7Gl per day and lets you use stone in your buildings.<br>
+        <input type="button" value="Build" onclick="Build(7)"> <input type="button" value="Demolish" onclick=" Demolish(7)" >
+      </div>
+      <div id="metalwork"class="option"style="display:none;" >
         <b>Metalwork</b><br>
         You can build metalworks after you build mine because it takes ore to work, it costs 1500Gl and 40 free pops.<br>
         Metalworks give you additional 17 gold per day by smelting ore and smithing<br>
-        <input type="button" value="Build" onclick="Build(4)"><br>
-        Demolishing a bulding gives you 40% amount of money that you pay for it.<br>
-        <input type="button" value="Demolish" onclick="Demolish(4)">
+        <input type="button" value="Build" onclick="Build(4)"><input type="button" value="Demolish" onclick="Demolish(4)">
       </div>
-      <div id="workshop" class="building1">
-        <b>Workshop</b><br>
+      <div id="workshop"class="option"style="display:none;">
+        <b>Workshop</b>
         You can build one workshop for every 75 pops, it costs 1000Gl and 30 free pops.<br>
         Workshops give you additional 17 gold per day by creating tools and things for your people<br>
-        <input type="button" value="Build" onclick="Build(5)"><br>
-        Demolishing a bulding gives you 40% amount of money that you pay for it.<br>
-        <input type="button" value="Demolish" onclick="Demolish(5)">
+        <input type="button" value="Build" onclick="Build(5)"> <input type="button" value="Demolish" onclick="Demolish(5)"><br>
       </div>
     </div>
-    <div id="military" style="display: none;">      
-      <div id="barracks" class="building1">
-      <b>Barracks</b>
-      <input type="button" value="Build" onclick="Build(6)">
-      <input type="button" value="Demolish" onclick=" Demolish(6)" >
+    <!--------------military-------------->
+    <div id="military" class="type"style="display:none;">      
+      <div id="barracks"class="option">
+        <b>Barracks</b><input type="button" value="Build" onclick="Build(6)"> <input type="button" value="Demolish" onclick=" Demolish(6)" >
+        
       </div>
-    </div> 
+      <div id="CityWalls"class="option"style="display:none;">
+        <b>City walls</b><br>
+        As we predicted we can use theres stones to defend our beautiful city, you need 300 people in your city, 1 stone resorce avayable (from stoneworks) and 4000 Gl to build it and 4Gl to upkeep it.<br>
+        City walls makes your people fell safe and give you additionlal defensive modificator.<br>
+        <input type="button" value="Build" onclick="Build(8)"> <input type="button" value="Demolish" onclick=" Demolish(8)" >
+      </div>
+    </div>
   </div>
 </div>
-<div id="nr2" style="display: none;">
-  wqooooooooooooooooooooooooooooooooooojidjiojdwiqojiwoqjiqwjdoqijdiwqjiwdjqojdoqij
+<!--------------------Technology-------------------->
+<div id="technology" style="display: none;">
+  <div id="interactions">
+    <div id="libraries">
+        
+    </div>
+    <input type="button" value="invest"onClick="invest()"style="display:none;clear: both;float: left;">
+    <div id="comunicatTech"></div>
+    <div id="shop">
+    </div>
+  </div>
+  <div id="techs">
+    <div id="tech1"class="option">
+        <b>?</b><br>
+        kopalnie :/ <br>
+        <input type="button" value="research"onClick="research(1)"><br>
+    </div>
+    <div id="tech2"class="option">
+      <b>Writing</b><br>
+      Thanks to ability to write your thoths and knoglage you can store them and people can esyly learn them.<br>
+      <u>Gives ability to build liblaries and bonus to TP grain</u><br>
+      <input type="button" value="research"onClick="research(2)"><br>
+    </div>
+    <div id="tech3"class="option"style="display:none;">
+      <b>Smelting/Smithing</b><br>
+      Your people grain ability to smelt ore and create tools and weakponts from it<br>
+      <u>Gives ability to build metalworks and bonus to Defensive modificator</u><br>
+      <input type="button" value="research"onClick="research(3)"><br>
+    </div>
+    <div id="tech4"class="option">
+      <b>Windmill</b><br>
+      We achived power of wind, now we can grind grain with incredible efectivity. <br>
+      <u>Gives you 1Gl more for every farm you have and reduces workers used in them by 2</u><br>
+      <input type="button" value="research"onClick="research(4)"><br>
+    </div>
+    <div id="tech5"class="option"style="display:none;">
+      <b>Stronger frames</b><br>
+      Now we can build think that bigger than before, think abaut every possibility it gives.<br>
+      <u>Gives ability to build Huge houses</u><br>
+      <input type="button" value="research"onClick="research(5)"><br>
+    </div>
+    <div id="tech6"class="option">
+      <b>Stoneworks</b><br>
+      Our people start creatinkg and using bloaks from stones, meably we can use this idea i bigger scale?<br>
+      <u>Gives ability to build stoneworks</u><br>
+      <input type="button" value="research"onClick="research(6)"><br>
+    </div>
+    <div id="tech7"class="option"style="display:none;">
+      <b>Walls</b><br>
+      From now on we can fell safe in our city, who whoud attack city as defended as ours, right?<br>
+      <u>Gives ability to build City walls that give you bonus to Defensive modificator </u><br>
+      <input type="button" value="research"onClick="research(7)"><br>
+    </div>
+  </div>
 </div>
-
-
-
-
-<!--
-  <input type="button" value="o 1" onclick="mod(1)">
-  <input type="button" value="o 2"  onclick="mod(2)">
-  <input type="button"  value="o 4" onclick="mod(4)">
-  <input type="button"  value="o 8" onclick="mod(8)">
-  <br>
-
-  <input type="button" id="b1" value="o 50" onclick="moremaxpopulation(1);" class="hidden">
-  <input type="button" id="b2" value="o 200" onclick="moremaxpopulation(2);" class="hidden">
-  <input type="button" id="b3" value="o 500" onclick="moremaxpopulation(3);" class="hidden">
-  <input type="button" id="b4" value="o 1000" onclick="moremaxpopulation(4);"class="hidden">
--->
-<!--Java-->
+<div id="Warfare"></div>
+  <input type="button" value="atack"onclick="atack()"style="display:none;clear: both;float: left;">
+</div>
 </body>
+<script src="./java.js"></script>
 </html>
