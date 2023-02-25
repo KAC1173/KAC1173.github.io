@@ -1,0 +1,44 @@
+body{
+    background-color: black;
+    color: white;
+}
+#buildings{
+    
+    float:right;
+    width:60%;
+}
+#tab{
+    
+    float:left;
+
+}
+.building1{
+    border:3px grey solid;
+    padding: 10px;
+    width:46.922%;
+    float:left;
+}
+.building2{
+    border:3px grey solid;
+    padding: 10px;
+    width:46.922%;
+    height:50%;
+    float:right;
+}
+
+#industry{
+    float:left;
+    border:3px rgb(122, 75, 75) solid;
+    width:45%;
+}
+#inf{
+    border:3px grey solid;
+    padding: 10px;
+    float: left;
+    text-align: center;
+    width:20%;
+}
+#buildings{
+    
+    float:right;
+}
