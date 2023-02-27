@@ -3,30 +3,29 @@ if(buildings){
 buildings = JSON.parse(buildings)
 }else{
   buildings = {house:2,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalworks:0,barracks:0}
-  localStorage.setItem("buildings",{"house":2,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalworks":0,"barracks":0})
+  localStorage.setItem("buildings",JSON.stringify({"house":2,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalworks":0,"barracks":0}))
 }
 let def = localStorage.getItem("defense")
 if(def){
   def=JSON.parse(def)
 }else{
   def={walls:0,army:0}
-  localStorage.setItem("defense",{"walls":0,"army":0})
+  localStorage.setItem("defense",JSON.stringify({"walls":0,"army":0}))
 }
 let resource = localStorage.getItem("resources")
 if(resource){
   resource=JSON.parse(resource)
 }else{
   resource={wains:1,stone:0}
-  localStorage.setItem("resources",{"wains":1,"stone":0})
+  localStorage.setItem("resources",JSON.stringify({"wains":1,"stone":0}))
 }
 let population = localStorage.getItem("population")
 if(population){
   population = JSON.parse(population)
 }else{
   population = {"working":0,"free":0,"max":0}
-  localStorage.setItem("population",{"working":0,"free":0,"max":0})
+  localStorage.setItem("population",JSON.stringify({"working":0,"free":0,"max":0}))
 }
-console.log(population)
 window.addEventListener("load",(event)=>{
     const navbar = document.querySelectorAll(".navButton")
     navbar.forEach(node=>{
@@ -60,6 +59,8 @@ let income = 0;
 const multipliers = {farm: 2,mine: 7, metalworks: 17, workshop: 10, house: -1, barracks: -10}
 for(let building in b){
     income+=(multipliers[building]||0)*b[building]
+    const money = parseInt(document.getElementById("m_total").innerText);
+    console.log(money,"$")
 }
 if(i%10==0){
     editLocalStorage("max","population",b.house*25)
