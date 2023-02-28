@@ -1,9 +1,17 @@
+
+let technology = localStorage.getItem("technology")
+if(technology){
+  technology = JSON.parse(technology)
+}else{
+  technology = {total:0,income:0,invest:0}
+  localStorage.setItem("technology",JSON.stringify({"total":0,"income":0,"invest":0}))
+}
 let buildings = localStorage.getItem("buildings");
 if(buildings){
 buildings = JSON.parse(buildings)
 }else{
-  buildings = {house:2,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalworks:0,barracks:0}
-  localStorage.setItem("buildings",JSON.stringify({"house":2,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalworks":0,"barracks":0}))
+  buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0}
+  localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalwork":0,"barracks":0}))
 }
 let def = localStorage.getItem("defense")
 if(def){
@@ -23,10 +31,43 @@ let population = localStorage.getItem("population")
 if(population){
   population = JSON.parse(population)
 }else{
-  population = {"working":0,"free":0,"max":0}
+  population = {"working":40,"free":10,"max":0}
   localStorage.setItem("population",JSON.stringify({"working":0,"free":0,"max":0}))
 }
+let money = localStorage.getItem("money")
+if(money){
+  money = JSON.parse(money)
+}else{
+  money = {"total":0,"income":0}
+  localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
+}
+let rs = localStorage.getItem("research")
+if(rs){
+  rs = JSON.parse(rs)
+}else{
+  rs = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}
+  localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}))
+}
 window.addEventListener("load",(event)=>{
+    const x = document.querySelectorAll(".t_option")
+    if(rs.windmill)document.getElementById("f_income").innerText=4;
+    for(let reso in rs){
+      if(reso!="windmill"&&rs[reso]){
+        let a = document.getElementById(reso).style.display="block";
+      }
+    }
+    x.forEach(tech=>{
+      if(rs[tech.id.split("_")[1]])tech.style.display="none";
+    })
+    let i=0;
+    x.forEach(tech=>{
+      if(tech.style.display!="none")i++;
+    })
+    if(i==0){
+      document.getElementById("complete").innerText="All research complete";
+    }else{
+      document.getElementById("complete").innerText="";
+    }
     const navbar = document.querySelectorAll(".navButton")
     navbar.forEach(node=>{
        node.addEventListener("click",(event)=>{
@@ -50,52 +91,105 @@ window.addEventListener("load",(event)=>{
         }
        })
     })
-    loadMoney()
+    updateDisplay()
 })
 let i=0;
 setInterval(()=>{
-const b= localStorage.getItem("buildings")||{house:2,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalworks:0,barracks:0};
-let income = 0;
-const multipliers = {farm: 2,mine: 7, metalworks: 17, workshop: 10, house: -1, barracks: -10}
+const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0};
+money.income=0;
+b.walls=def.cwalls;
+technology.income=0;
+const multipliers = {farm: 2,mine: 7, metalwork: 17, workshop: 10, house: -1, barracks: -10, library:-2,hhouse:-2,stoneworks:7,walls:-4}
+const tMultipliers = {library:4}
+if(rs.windmill)multipliers.farm=3;
 for(let building in b){
-    income+=(multipliers[building]||0)*b[building]
-    const money = parseInt(document.getElementById("m_total").innerText);
-    console.log(money,"$")
+    money.income+=Math.floor((multipliers[building]||0)*(b[building]||0))
+    technology.income+=Math.floor((tMultipliers[building]||0)*(b[building]||0))
 }
+technology.income+=technology.invest;
+money.income+=Math.floor((population.free+population.working)/10);
+money.total+=money.income;
+population.max=(b.house*25)+(b.hhouse*70);
+technology.total+=rs.library?(technology.income||0):Math.floor((technology.income||0)*1.1)
 if(i%10==0){
-    editLocalStorage("max","population",b.house*25)
-    editLocalStorage("free","population",(population.free||0+population.working||0)+((population.max*0.10)||0))    
+    population.free+=Math.floor(population.max*0.10)
+    if(population.free+population.working>population.max){
+      population.free=population.max-population.working;
+    }
 }
 i++;
+updateDisplay()
 },1000)
+function UpdateStorage(){
+  localStorage.getItem("technology")?localStorage.setItem("technology",JSON.stringify(technology)):localStorage.setItem("technology",JSON.stringify({"total":0,"income":0,"invest":0}))
+  localStorage.getItem("buildings")?localStorage.setItem("buildings",JSON.stringify(buildings)):localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalwork":0,"barracks":0}))
+  localStorage.getItem("defense")?localStorage.setItem("defense",JSON.stringify(def)):localStorage.setItem("defense",JSON.stringify({"walls":0,"army":0}))
+  localStorage.getItem("resources")?localStorage.setItem("resources",JSON.stringify(resource)):localStorage.setItem("resources",JSON.stringify({"wains":1,"stone":0}))
+  localStorage.getItem("population")?localStorage.setItem("population",JSON.stringify(population)):localStorage.setItem("population",JSON.stringify({"free":0,"working":0,"max":0}))
+  localStorage.getItem("money")?localStorage.setItem("money",JSON.stringify(money)):localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
+  localStorage.getItem("research")?localStorage.setItem("research",JSON.stringify(rs)):localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}))
+}
+function updateDisplay(){
+  document.getElementById("m_total").innerText=`${money.total.toFixed(0)}gl`;
+  document.getElementById("m_income").innerText=`+${money.income.toFixed(0)}gl/day`;
+  document.getElementById("p_current").innerText=(population.free+population.working).toFixed(0);
+  document.getElementById("p_max").innerText=population.max.toFixed(0);
+  document.getElementById("p_income").innerText=(population.free+population.working)==population.max?"+0pops/10 days":`+${Math.floor(population.max*0.10)}pops/10days`
+  document.getElementById("p_free").innerText=`${population.free.toFixed(0)} free pops`;
+  document.getElementById("r_weins").innerText=`${resource.wains.toFixed(0)} ore weins`;
+  document.getElementById("r_ores").innerText=`${resource.stone.toFixed(0)} ores`;
+  document.getElementById("tp_total").innerText=`${technology.total.toFixed(0)}tp`;
+  document.getElementById("tp_income").innerText=`+${technology.income.toFixed(0)}tp/day`;
+  UpdateStorage()
+}
 //navigation////////////
 function typesNav(id) {
     var economy = document.getElementById("economy");
-    var freepops = document.getElementById("freepops");
-    var weins = document.getElementById("weins");
-    var ores = document.getElementById("ores");
+    var freepops = document.getElementById("p_free");
+    var weins = document.getElementById("r_weins");
+    var ores = document.getElementById("r_ores");
     var ecoNav = document.getElementById("ecoNav");
     var technology = document.getElementById("technology");
     var techpointsNaw= document.getElementById("techpoints");
+    var wafare=document.getElementById("Warfare");
+    var invest=document.getElementById("invest")
+    var complete=document.getElementById("complete")
     switch(id){
     case 1:
-        economy.style.display = "block";
-            freepops.style.display = "block";
-            weins.style.display = "block";
-            ores.style.display = "block";
-            ecoNav.style.display = "block";
-        technology.style.display = "none";
-            techpointsNaw.style.display = "none";
-        
+      economy.style.display = "block";
+      freepops.style.display = "block";
+      weins.style.display = "block";
+      ores.style.display = "block";
+      ecoNav.style.display = "block";
+      technology.style.display = "none";
+      techpointsNaw.style.display = "none";
+      wafare.style.display = "none";
+      invest.style.display = "none";
+      complete.style.display = "none";  
     break;
     case 2:
-        economy.style.display = "none";
-            freepops.style.display = "none";
-            weins.style.display = "none";
-            ores.style.display = "none";            
-            ecoNav.style.display = "none";
-        technology.style.display = "block";
-            techpointsNaw.style.display = "block";
+      economy.style.display = "none";
+      freepops.style.display = "none";
+      weins.style.display = "none";
+      ores.style.display = "none";            
+      ecoNav.style.display = "none";
+      technology.style.display = "block";
+      techpointsNaw.style.display = "block";
+      wafare.style.display = "none";
+      invest.style.display = "block";
+      complete.style.display = "block";
+    break;
+    case 3:
+      economy.style.display = "none";
+      freepops.style.display = "none";
+      weins.style.display = "none";
+      ores.style.display = "none";            
+      ecoNav.style.display = "none";
+      technology.style.display = "none";
+      techpointsNaw.style.display = "none";
+      wafare.style.display = "block";
+      invest.style.display = "none";
+      complete.style.display = "none";
     break;
     }
 } 
@@ -123,167 +217,74 @@ function typesBuildings(id){
 }
 }
 //buildings////
-let farmsAmount=buildings.farms||2;
-let houseAmount=buildings.house||3;
-let liblaryAmount=buildings.library||0;
-let HugeHouseAmount=buildings.hhouse||0;
-let mineAmount=buildings.house||0;
-let metalworksAmount=buildings.metalworks||0;
-let stonewoksAmount=buildings.stoneworks||0;
-let workshopAmount=buildings.workshops||0;
-let CWalls=def.walls||0;
-let weins=resource.wains||1;
-let stone=resource.stone||0;
-let wokingPops=population.working||0;
-let FarmUpgrade=0;
-function Build(id){
-    if(freepops>=20&&money>=200&&id==1){
-      modifier+=2+FarmUpgrade;
-      farmsAmount++;
-      freepops-=20-FarmUpgrade*2;
-      money-=200;
-    }
-    else if(money>100&&id==2){
-      modifier-=1;
-      houseAmount++;
-      maxpopulation+=25;
-      money-=100;
-    }
-    else if(money>500&&weins>0&&id==3){
-      if(ore<0&&metalworksAmount>mineAmount){
-        modifier+=20-3;
-      }
-      modifier+=7;
-      mineAmount++;
-      freepops-=50;
-      money-=500;
-      weins--;      
-      ore++;
-    }
-    else if(money>1500&&ore>0&&id==4){
-      modifier+=20-3;
-      metalworksAmount++;
-      freepops-=40;
-      ore--;
-      money-=1500;
-    }
-    else if(money>1000&&population>75*workshopsAmount&&id==5){
-      
-      modifier+=10;
-      workshopsAmount++;
-      freepops-=30;
-      money-=1000;
-    }
-    else if(money>1000&&freepops>20&&id==6){
-      modifier-=10;
-      baraksAmount++;
-      freepops-=20;
-      money-=1000;
-      maxarmy+=50;
-    }
-    else if(money>2250&&freepops>50&&weins>0&&id==7){
-        modifier+=7;
-        stonewoksAmount++;
-        freepops-=50;
-        money-=2250;
-        weins--;
-        stone++;
-    }
-    else if(money>4000&&population>300&&stone>0&&id==8){
-        modifier-=4;
-        CWall++;
-        money-=4000;
-        modDef+=0.10;
-        document.getElementById(CityWalls).style.display=none;
-    }
-    else if(money>1000&&population>100*liblaryAmount0&&id==9){
-        modifier-=2;
-        liblaryAmount++;
-        money-=1000;
-        TP_income+=2;
-    }
-    else if(money>200&&id==10){
-        modifier-=2;
-        HugeHouseAmount++;
-        money-=200;
-        maxpopulation+=70;
-    }
-    invent()
-    wokingPops=population-freepops;
-    }
-    function Demolish(id){
-    if(farmsAmount>0&&id==1){
-      modifier-=2;
-      farmsAmount--;
-      freepops+=20;
-      money+=200*demolishingMod;
-    }
-    else if(farmsAmount>0&&id==2){
-      modifier+=1;
-      houseAmount--;
-      maxpopulation-=25;
-      money+=100*demolishingMod;
-    }
-    else if(mineAmount>0&&id==3){
-      modifier-=7;
-      mineAmount--;
-      freepops+=50;
-      money+=500*demolishingMod;
-      weins++;
-      ore--;
-      if(ore<0){
-        alert("too few ore, we can't supply metalworks");
-        modifier-=20-3;
-      }
-    }
-    else if(mineAmount>0&&ore>0&&id==4){
-      modifier-=20-3;
-      metalworksAmount--;
-      freepops+=40;
-      ore++;
-      money+=1500*demolishingMod;
-    }
-    else if(workshopAmount>0&&id==5){
-      modifier-=10;
-      workshopAmount--;
-      freepops+=30;
-      money+=1000*demolishingMod;
-    }
-    else if(baraksAmount>0&&id==6){
-      freepops+=20;
-      maxarmy-=50;
-      baraksAmount--;
-      money+=1000*demolishingMod;
-    }      
-    else if(stonewoksAmount>0&&id==7){
-        modifier-=7;
-        stonewoksAmount--;
-        freepops+=50;
-        money+=2250*demolishingMod;
-        weins++;
-        stone--;
-    }
-    else if(liblaryAmount>0&&id==9){
-        modifier+=2;
-        liblaryAmount--;
-        money+=1000*demolishingMod;
-        TP_income-=2;
-        techpoints-=50;
-        if(techpoints<0)techpoints=0;
-    }
-    else if(money>200&&id==10){
-        modifier-=2;
-        HugeHouseAmount--;
-        money+=200*demolishingMod;
-        maxpopulation-=70;
-    }
-    wokingPops=population-freepops;
+/**
+ * Buy Building
+ * @param {Number} id 
+ */
+function buy(id){
+  const bu = [
+    {id:1,name:"house",cost:100,pop:0,category:"buildings"},
+    {id:2,name:"library",cost:1000,pop:0,category:"buildings"},
+    {id:3,name:"hhouse",cost:200,pop:0,category:"buildings"},
+    {id:4,name:"farm",cost:200,pop:20,category:"buildings"},
+    {id:5,name:"mine",cost:500,pop:50,category:"buildings"},
+    {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings"},
+    {id:7,name:"metalwork",cost:1500,pop:40,category:"buildings"},
+    {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
+    {id:9,name:"barracks",cost:1500,pop:25,category:"defense"},
+    {id:10,name:"cwalls",cost:4000,pop:0,category:"defense"},
+  ]
+  const building = bu.filter(r=>r.id==id)[0]
+  if(!building)return alert("Invalid id!")
+  if(building.cost>0&&building.cost>money.total)return alert("Not enough money!")
+  if(building.pop>0&&building.pop>population.free)return alert("Not enough free population")
+  if(building.cost!=0){
+    money.total-=building.cost;
+  }
+  if(building.pop!=0){
+    population.free-=building.pop;
+    population.working+=building.pop;
+  }
+  if(building.category=="buildings"){
+    buildings[building.name]+=1;
+  }
+  if(building.category=="defense"){
+    def[building.name]+=1;
+  }
+  updateDisplay()
+}
+function Demolish(id){
+  const bu = [
+    {id:1,name:"house",cost:100,pop:0,category:"buildings"},
+    {id:2,name:"library",cost:1000,pop:0,category:"buildings"},
+    {id:3,name:"hhouse",cost:200,pop:0,category:"buildings"},
+    {id:4,name:"farm",cost:200,pop:20,category:"buildings"},
+    {id:5,name:"mine",cost:500,pop:50,category:"buildings"},
+    {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings"},
+    {id:7,name:"metalwork",cost:1500,pop:40,category:"buildings"},
+    {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
+    {id:9,name:"barracks",cost:1500,pop:25,category:"defense"},
+    {id:10,name:"cwalls",cost:4000,pop:0,category:"defense"},
+  ]
+  const building = bu.filter(r=>r.id==id)[0]
+  if(!building)return alert("Invalid id")
+  if(buildings[building.name]==0)return;
+  money.total+=building.cost*0.4
+  population.working-=building.pop*0.4;
+  population.free+=building.pop*0.4;
+  if(building.category=="buildings"){
+    buildings[building.name]-=1;
+  }
+  if(building.category=="defense"){
+    def[building]-=1;
+  }
+  updateDisplay()
 }
 //warfare//////////////////////////////
-let modDef=0.1;
-let destruction;
-let timeUntilAttack=Math.random()*999999999999+60000;
-let straty;
+// let modDef=0.1;
+// let destruction;
+// let timeUntilAttack=Math.random()*999999999999+60000;
+// let straty;
 /*
 setInterval(() => {
   alert('You have been atacked!');
@@ -294,116 +295,82 @@ setInterval(() => {
  * @param {Number} armiaW liczebność armi wroga
  */
 function defense(armiaW){
-let straty;
-if(def.army*modDef>armiaW){
-straty=def.army*(random()* (0.50 - 0.10) + 0.10)-(def.army*modDef);
-armia-=straty;
-alert("You were victorius, you lost "+straty+" army");
-}
-else{
-  straty=armia*(Math.random()* (0.90 - 0.50) + 0.40)-(def.army*modDef);
-  if(straty>=def.army){
-  def.army=0;
-  }
-  else{
-  def.army-=straty;
-  }
-    income-=(straty*(armiaW/10));
-alert("You were defeted, you lost "+straty+" army and "+(straty*armiaW/10)+" Gl ");
-}
-editLocalStorage("army","defense",def.army)
+// let straty;
+// if(def.army*modDef>armiaW){
+// straty=def.army*(random()* (0.50 - 0.10) + 0.10)-(def.army*modDef);
+// armia-=straty;
+// alert("You were victorius, you lost "+straty+" army");
+// }
+// else{
+//   straty=armia*(Math.random()* (0.90 - 0.50) + 0.40)-(def.army*modDef);
+//   if(straty>=def.army){
+//   def.army=0;
+//   }
+//   else{
+//   def.army-=straty;
+//   }
+//     income-=(straty*(armiaW/10));
+// alert("You were defeted, you lost "+straty+" army and "+(straty*armiaW/10)+" Gl ");
+// }
 }
 /**
  * @param {Number} defArmy
  * @param {Number} derArmyMod
  */
 function atack(defArmy,defArmyMod){
-if(armi>defArmy*defArmyMod){
-  straty=armia*(Math.random()* (0.30 - 0.10) + 0.10);
-  money=Math.random()*(3000-1000)+1000;
-income+=money;
-alert("You were victorius, you lost "+straty+" army and get "+money+"Gl");
-}else{
-  straty=armia*(Math.random()* (0.90 - 0.30) + 0.30)+defArmy*defArmyMod/2;
-  armia-=straty;
-alert("You were defeted, you lost "+straty+" army");
-}
+// if(armi>defArmy*defArmyMod){
+//   straty=armia*(Math.random()* (0.30 - 0.10) + 0.10);
+//   money=Math.random()*(3000-1000)+1000;
+// income+=money;
+// alert("You were victorius, you lost "+straty+" army and get "+money+"Gl");
+// }else{
+//   straty=armia*(Math.random()* (0.90 - 0.30) + 0.30)+defArmy*defArmyMod/2;
+//   armia-=straty;
+// alert("You were defeted, you lost "+straty+" army");
+// }
 }
 //techs///////
-let techpoints=0;
-let TP_income=0;
-let TP_bonus=0;
-let investAmount=1;
-techpoints+=TP_income*TP_bonus;
-const researches = [
-  {name:"mine",cost:100},
-  {name:"liblary",cost:300,TP_bonus:0.1},
-  {name:"metalwork",cost:600,modDef:0.1},
-  {name:"Windmill",cost:900,FarmUpgrade:1},
-  {name:"HugeHouse",cost:1500},
-  {name:"stoneworks",cost:600},
-  {name:"CityWalls",cost:2000},
-]
 function invest(){
-    if(money>250*investAmount){
-        TP_income+=1;
+    if(money.total>=250){
+      technology.invest+=1;
+      technology.income+=1;
+      money.total-=250;
     }else{
-        document.getElementById("comunicatTech").innerText="Not enought money my King, you need at least "+250*investAmount+"Gl";
+      alert("Not enought money my King, you need at least "+250+"Gl")
     }
-    
+    updateDisplay()
 }
 /**
  * @param {Number} id
  */
 function research(id){
+  const researches = [
+    {name:"mine",cost:100},
+    {name:"library",cost:300,TP_bonus:0.1},
+    {name:"metalwork",cost:600,modDef:0.1},
+    {name:"windmill",cost:900,FarmUpgrade:1},
+    {name:"hhouse",cost:1500},
+    {name:"stoneworks",cost:600},
+    {name:"cwalls",cost:2000},
+  ]
   const item = researches[id-1]
-    if(techpoints>=item.cost){
-        document.getElementById(item.name).style.display = "block";
-        TP_income+=item.TP_bonus||0;
-        modDef+=item.modDef||0;
-        FarmUpgrade+=item.FarmUpgrade||0;
-        if(item.FarmUpgrade&&FarmUpgrade==1){
-          income+=farmsAmount;
-          freepops+=farmsAmount*2;
-        }
-    }
-}
-function invent(){
-    if(mineAmount>=1){
-        alert("Check your tech tree");
-        document.getElementById(tech3).style.display = "block";
-    }
-    if(stone>=1){
-        alert("Check your tech tree");
-        document.getElementById(tech7).style.display = "block";
-    }
-    if(liblaryAmount>=1){
-        alert("Check your tech tree");
-        document.getElementById(tech5).style.display = "block";
-    }
-}
-/**
- * Loads money from `localStorage`
- */
-function loadMoney(){
-  const money = localStorage.getItem("money")||0;
-  document.getElementById("m_total").innerText=money;
-}
-/**
- * Edits `localStorage`
- * @param {String} property 
- * @param {String} origin
- * @param {Object} data
- * @returns {void}
- */
-function editLocalStorage(property,origin,data){
-
-  let d=localStorage.getItem(origin)
-  if(!d){
-    d = {[property]:data}
-    console.log(d)
-  }else{
-    d[property]=data;
+  if(!item)return alert("Invalid id")
+  if(rs[item.name]){
+    if(item.name!="windmill")document.getElementById(item.name).style.display = "none";
+    return; 
   }
-  localStorage.setItem(origin,d)
+  if(technology.total>=item.cost){
+    if(item.name!="windmill"){
+      const x = document.getElementById(item.name)
+      console.log(x)
+      x.style.display="block";
+      document.getElementById("r_"+item.name).style.display = "none";
+    }
+    technology.income+=item.TP_bonus||0;
+    //modDef+=item.modDef||0;
+    rs[item.name]=true;
+  }else{
+    alert("Not enough tech points")
+  }
+  updateDisplay()
 }

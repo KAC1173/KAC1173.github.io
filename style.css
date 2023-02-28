@@ -4,7 +4,12 @@ body{
     color: rgb(199, 199, 199);
 }
 /*navigation*/
-
+#m_income,#tp_income,#p_income{
+    color:#706a6a;
+}
+.tp_cost{
+    color:#706a6a;
+}
 #info{
     width: 30%;
     float:left;
@@ -64,7 +69,7 @@ input[type=button]:hover{
     float:right;
     width: 60%;
 }*/
-.option{
+.option, .t_option{
     float:left;
     /*border: 3px grey solid;*/
     width:49.25%;
