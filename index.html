@@ -41,7 +41,7 @@
       <div id="library" class="option" style="display:none;">
         <b>Library</b><br>
         For every 100pops you can build 1 liblary, it cost 1000Gl and 2Gl to mentain<br>
-        It gives you additional <b>4 TP per day</b> and improves your people lives<br>
+        It gives you additional <b class="highlight">4 TP per day</b> and improves your people lives<br>
         <input type="button" value="Build" onclick="buy(2)"><input type="button" value="Demolish" onclick="Demolish(2)"><br>
       </div>
       <div id="hhouse" class="option"style="display:none;">
@@ -54,31 +54,31 @@
     <div id="industry" class="type"style="display:none;">    
       <div id="farm" class="option">
         <b>Farm</b><br>
-        Every farm gives you additional <b><span id="f_income">2</span> gold per day</b> but it costs 200Gl and 20 free pops<br>
+        Every farm gives you additional <b class="highlight"><span id="f_income">2</span> gold per day</b> but it costs 200Gl and 20 free pops<br>
         <input type="button" value="Build" onclick="buy(4)"><input type="button" value="Demolish" onclick="Demolish(4)">
       </div>
       <div id="mine"class="option"style="display:none;">
         <b>Mine</b><br>
         To build a mine you have to have a resorce wein, it costs 500Gl and 50 free pops.<br>
-        Mines give you additional <b>7 gold per day</b> by exporting ore<br>
+        Mines give you additional <b class="highlight">7 gold per day</b> by exporting ore<br>
         <input type="button" value="Build" onclick="buy(5)"><input type="button" value="Demolish" onclick="Demolish(5)">
       </div>
       <div id="stoneworks"class="option"style="display:none;">
         <b>Stoneworks</b><br>
         We can set up a stoneworks station. This would cost 2250Gl and a resorse wein.<br>
-        Stoneworks gives you additional <b>7 gold per day</b> and lets you use stone in your buildings.<br>
+        Stoneworks gives you additional <b class="highlight">7 gold per day</b> and lets you use stone in your buildings.<br>
         <input type="button" value="Build" onclick="buy(6)"> <input type="button" value="Demolish" onclick=" Demolish(6)" >
       </div>
       <div id="metalwork"class="option"style="display:none;" >
         <b>Metalwork</b><br>
         You can build metalworks after you build the mine because it requires ore to work, it costs 1500Gl and 40 free pops.<br>
-        Metalworks gives you additional <b>17 gold per day</b>1 by smelting ore and smithing<br>
+        Metalworks gives you additional <b class="highlight">17 gold per day</b>1 by smelting ore and smithing<br>
         <input type="button" value="Build" onclick="buy(7)"><input type="button" value="Demolish" onclick="Demolish(7)">
       </div>
       <div id="workshop"class="option"style="display:none;">
         <b>Workshop</b>
         You can build one workshop for every 75 pops, it costs 1000Gl and 30 free pops.<br>
-        Workshops give you additional <b>17 gold per day</b> by creating tools and things for your people<br>
+        Workshops give you additional <b class="highlight">17 gold per day</b> by creating tools and things for your people<br>
         <input type="button" value="Build" onclick="buy(8)"> <input type="button" value="Demolish" onclick="Demolish(8)"><br>
       </div>
     </div>
@@ -91,7 +91,7 @@
       </div>
       <div id="cwalls"class="option"style="display:none;">
         <b>City walls</b><br>
-        Now you can build walls to defend your city, you need 300 people in your city, 1 stone (<b>Stoneworks</b>) and 4000 Gl to build it and 4Gl to upkeep it.<br>
+        Now you can build walls to defend your city, you need 300 people in your city, 1 stone (<b class="highlight">Stoneworks</b>) and 4000 Gl to build it and 4Gl to upkeep it.<br>
         City walls make your people feel safe and increase your defensive modifier.<br>
         <input type="button" value="Build" onclick="buy(10)"> <input type="button" value="Demolish" onclick=" Demolish(10)" >
       </div>
@@ -114,43 +114,43 @@
     <div id="r_mine"class="t_option">
         <b>Mine</b> <span class="tp_cost">100 techpoints</span><br>
         Your people discovered how to dig out precious resorces. You can now construct a mine. <br>
-        <u>Unlocks <b>Mine</b></u><br>
+        <u>Unlocks <b class="highlight">Mine</b></u><br>
         <input type="button" value="research"onClick="research(1)"><br>
     </div>
     <div id="r_library"class="t_option">
       <b>Writing</b> <span class="tp_cost">300 techpoints</span><br>
       Thanks to the ability to write down your thoughts and knowledge you can store them and people can easily learn them.<br>
-      <u>Unlocks <b>Library</b> and gives bonus tp multiplier</u><br>
+      <u>Unlocks <b class="highlight">Library</b> and gives bonus tp multiplier</u><br>
       <input type="button" value="research"onClick="research(2)"><br>
     </div>
     <div id="r_metalwork"class="t_option"style="display:none;">
       <b>Smelting</b> <span class="tp_cost">600 techpoints</span><br>
       Your people gain the ability to smelt ore and create tools<br>
-      <u>Unlocks <b>Metalworks</b> and gives bonus defense modifier</u><br>
+      <u>Unlocks <b class="highlight">Metalworks</b> and gives bonus defense modifier</u><br>
       <input type="button" value="research"onClick="research(3)"><br>
     </div>
     <div id="r_windmill"class="t_option">
       <b>Windmill</b> <span class="tp_cost">900 techpoints</span><br>
       We learned how to harvest the power of the wind, now we can grind grain with incredible efficiency. <br>
-      <u>Adds 1gl to <b>Farm</b> production and reduces its workers amount by 2</u><br>
+      <u>Adds 1gl to <b class="highlight">Farm</b> production and reduces its workers amount by 2</u><br>
       <input type="button" value="research"onClick="research(4)"><br>
     </div>
     <div id="r_hhouse"class="t_option"style="display:none;">
       <b>Stronger frames</b> <span class="tp_cost">1500 techpoints</span><br>
       Now we can build and think bigger than before, just think about the increse in max population.<br>
-      <u>Unlocks <b>Huge house</b></u><br>
+      <u>Unlocks <b class="highlight">Huge house</b></u><br>
       <input type="button" value="research"onClick="research(5)"><br>
     </div>
     <div id="r_stoneworks"class="t_option">
       <b>Stoneworks</b> <span class="tp_cost">600 techpoints</span><br>
       Our people start creating structures from stone, maybe we can use this to create stronger structures<br>
-      <u>Unlocks <b>Stoneworks</b></u><br>
+      <u>Unlocks <b class="highlight">Stoneworks</b></u><br>
       <input type="button" value="research"onClick="research(6)"><br>
     </div>
     <div id="r_cwalls"class="t_option"style="display:none;">
       <b>Walls</b> <span class="tp_cost">2000 techpoints</span><br>
       From now on we can feel safe in our city, who whoud attack a city as defended as ours, right?<br>
-      <u>Unlocks <b>City walls</b></u><br>
+      <u>Unlocks <b class="highlight">City walls</b></u><br>
       <input type="button" value="research"onClick="research(7)"><br>
     </div>
   </div>

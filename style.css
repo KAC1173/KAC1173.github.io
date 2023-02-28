@@ -7,6 +7,9 @@ body{
 #m_income,#tp_income,#p_income{
     color:#706a6a;
 }
+.highlight{
+    color:rgb(221, 216, 186)
+}
 .tp_cost{
     color:#706a6a;
 }

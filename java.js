@@ -361,16 +361,22 @@ function research(id){
   }
   if(technology.total>=item.cost){
     if(item.name!="windmill"){
-      const x = document.getElementById(item.name)
-      console.log(x)
-      x.style.display="block";
-      document.getElementById("r_"+item.name).style.display = "none";
+      document.getElementById(item.name).style.display="block";
     }
+    document.getElementById("r_"+item.name).style.display = "none";
     technology.income+=item.TP_bonus||0;
     //modDef+=item.modDef||0;
     rs[item.name]=true;
   }else{
     alert("Not enough tech points")
+  }
+  const t_options = document.querySelectorAll(".t_option")
+  let j = 0;
+  t_options.forEach(r=>{
+    if(r.style.display!="none")j=1;
+  })
+  if(j==0){
+    document.getElementById("complete").innerText="All research complete";
   }
   updateDisplay()
 }
