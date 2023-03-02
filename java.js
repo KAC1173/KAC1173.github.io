@@ -303,6 +303,7 @@ function defend(armiaW) {
  */
 function atack(defArmy,defArmyMod) {
   let straty,m,message;
+  if(army.max==0)return showModal({header:"Error",body:"You must have at least 1 barrack to be able to attack."})
   if(defArmy*defArmyMod>army.total*army.mod){
     straty = army.total;
     m=0;
