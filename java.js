@@ -8,6 +8,15 @@ const defaults = {
   research:{mine:false,library:false,metalwork:false,windmill:false,hhouse:false,stoneworks:false,cwalls:false,buymulti:false},
   army:{total:0,income:0,mod:1}
 }
+/**
+ * @returns {Boolean}
+ */
+function checkCooldown(){
+  return Date.now()-localStorage.getItem("cooldown")>45000;
+}
+function updateCooldown(){
+  return localStorage.setItem("cooldown",Date.now())
+}
 let technology = localStorage.getItem("technology")
 if(technology){
   technology = JSON.parse(technology)
@@ -69,8 +78,13 @@ window.addEventListener("load",(event)=>{
   document.getElementById("closeModal").addEventListener("click",()=>{
     closeModal()
   })
-  document.getElementById("attack").addEventListener("click",r=>{ 
-    atack(Math.floor(Math.min(1.25,Math.max(0.4,Math.random()*2))*army.total),Number(Math.min(1.20,Math.max(0.60,Math.random()*2)).toFixed(2)))
+  document.getElementById("attack").addEventListener("click",r=>{
+    if(checkCooldown()){
+      atack(Math.floor(Math.min(1.25,Math.max(0.4,Math.random()*2))*army.total),Number(Math.min(1.20,Math.max(0.60,Math.random()*2)).toFixed(2)))
+      updateCooldown()
+    }else{
+      return showModal({header:"Cooldown",body:"Your army is still resting after your previous attack.",footer:`You have to wait ${Math.floor(Math.abs(((Date.now()-localStorage.getItem("cooldown"))-45000))/1000)}s`})
+    }
   })
   const x = document.querySelectorAll(".t_option")
   if(research.windmill) document.getElementById("f_income").innerText = 4;
@@ -302,16 +316,17 @@ function defend(armiaW) {
  * @param {Number} defArmyMod
  */
 function atack(defArmy,defArmyMod) {
-  let straty,m,message;
   if(army.max==0)return showModal({header:"Error",body:"You must have at least 1 barrack to be able to attack."})
+  if(army.total==0)return showModal({header:"Error",body:"You must have at least 1 soldier to attack."});
+  let straty,m,message;
   if(defArmy*defArmyMod>army.total*army.mod){
     straty = army.total;
     m=0;
     message = `You were defeated, you lost ${straty} soldiers`;
   }else{
-    straty = Math.floor(Math.min(0.5,Math.max(1,Math.random()*2))*(defArmy*defArmyMod))
-    m=Math.floor(Math.max(1000,Math.min(3000,Math.random()*4000)));
-    message=`You were victorious, you lost ${straty} soldiers, but got ${m} Gl`
+      straty = Math.floor(Math.min(0.5,Math.max(1,Math.random()*2))*(defArmy*defArmyMod))
+      m=Math.floor(Math.max(1000,Math.min(3000,Math.random()*4000)));
+      message=`You were victorious, you lost ${straty} soldiers, but got ${m} Gl`
   }
   army.total -= straty;
   money.total += m;
