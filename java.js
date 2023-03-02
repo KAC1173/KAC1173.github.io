@@ -1,4 +1,13 @@
-
+const defaults = {
+  technology:{total:0,income:0,invest:0},
+  buildings:{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0},
+  defense:{walls:0},
+  resource:{wains:1,stone:0},
+  population:{working:40,free:10,max:0},
+  money:{total:0,income:0},
+  research:{mine:false,library:false,metalwork:false,windmill:false,hhouse:false,stoneworks:false,cwalls:false,buymulti:false},
+  army:{total:0,income:0,mod:1}
+}
 let technology = localStorage.getItem("technology")
 if(technology){
   technology = JSON.parse(technology)
@@ -13,25 +22,25 @@ buildings = JSON.parse(buildings)
   buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0}
   localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalwork":0,"barracks":0}))
 }
-let def = localStorage.getItem("defense")
-if(def){
-  def=JSON.parse(def)
+let defense = localStorage.getItem("defense")
+if(defense){
+  defense=JSON.parse(defense)
 }else{
-  def={walls:0,army:0}
-  localStorage.setItem("defense",JSON.stringify({"walls":0,"army":0}))
+  defense={walls:0}
+  localStorage.setItem("defense",JSON.stringify({"walls":0}))
 }
 let resource = localStorage.getItem("resources")
 if(resource){
   resource=JSON.parse(resource)
 }else{
   resource={wains:1,stone:0}
-  localStorage.setItem("resources",JSON.stringify({"wains":1,"stone":0}))
+  localStorage.setItem("resource",JSON.stringify({"wains":1,"stone":0}))
 }
 let population = localStorage.getItem("population")
 if(population){
   population = JSON.parse(population)
 }else{
-  population = {"working":40,"free":10,"max":0}
+  population = {working:40,free:10,max:0}
   localStorage.setItem("population",JSON.stringify({"working":0,"free":0,"max":0}))
 }
 let money = localStorage.getItem("money")
@@ -41,187 +50,174 @@ if(money){
   money = {"total":0,"income":0}
   localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
 }
-let rs = localStorage.getItem("research")
-if(rs){
-  rs = JSON.parse(rs)
+let research = localStorage.getItem("research")
+if(research){
+  research = JSON.parse(research)
 }else{
-  rs = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}
-  localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}))
+  research = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}
+  localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}))
 }
+let army = localStorage.getItem("army")
+if(army){
+  army=JSON.parse(army)
+}else{
+  army = {"total":0,"income":0,"mod":1}
+  localStorage.setItem("army",JSON.stringify(army))
+}
+army.mod=1;
 window.addEventListener("load",(event)=>{
-    const x = document.querySelectorAll(".t_option")
-    if(rs.windmill)document.getElementById("f_income").innerText=4;
-    for(let reso in rs){
-      if(reso!="windmill"&&rs[reso]){
-        let a = document.getElementById(reso).style.display="block";
+  document.getElementById("closeModal").addEventListener("click",()=>{
+    closeModal()
+  })
+  document.getElementById("attack").addEventListener("click",r=>{ 
+    atack(Math.floor(Math.min(1.25,Math.max(0.4,Math.random()*2))*army.total),Number(Math.min(1.20,Math.max(0.60,Math.random()*2)).toFixed(2)))
+  })
+  const x = document.querySelectorAll(".t_option")
+  if(research.windmill) document.getElementById("f_income").innerText = 4;
+  if(!research.buymulti&&buildings.house>=100){
+    document.getElementById("r_buymulti").style.display="block";
+  }
+  for(let reso in research){
+    if(reso!="windmill" && research[reso]){
+      let a = document.getElementById(reso).style.display = "block";
+    }
+  }
+  x.forEach(tech=>{
+    if(research[tech.id.split("_")[1]]) tech.style.display = "none";
+  })
+  let i = 0;
+  x.forEach(tech=>{
+    if(tech.style.display!="none") i++;
+  })
+  if(i==0){
+    document.getElementById("complete").innerText="All research complete";
+  } else {
+    document.getElementById("complete").innerText="";
+  }
+  const navbar = document.querySelectorAll(".navButton")
+  navbar.forEach(node=>{
+    node.addEventListener("click",(event)=>{
+      if(event.target.id.startsWith("nav")){
+        typesNav(parseInt(event.target.id.split("_")[1]))
+        navbar.forEach(r=>{
+          if(r.id.includes("nav")){
+            r.classList.remove("selected")
+          }
+        })
+        node.classList.toggle("selected")
       }
-    }
-    x.forEach(tech=>{
-      if(rs[tech.id.split("_")[1]])tech.style.display="none";
+      if(event.target.id.startsWith("bud")){
+        typesBuildings(parseInt(event.target.id.split("_")[1]))
+        navbar.forEach(r=>{
+          if(r.id.includes("bud")){
+            r.classList.remove("selected")
+          }
+        })
+        node.classList.toggle("selected")
+      }
     })
-    let i=0;
-    x.forEach(tech=>{
-      if(tech.style.display!="none")i++;
-    })
-    if(i==0){
-      document.getElementById("complete").innerText="All research complete";
-    }else{
-      document.getElementById("complete").innerText="";
-    }
-    const navbar = document.querySelectorAll(".navButton")
-    navbar.forEach(node=>{
-       node.addEventListener("click",(event)=>{
-        if(event.target.id.startsWith("nav")){
-            typesNav(parseInt(event.target.id.split("_")[1]))
-            navbar.forEach(r=>{
-              if(r.id.includes("nav")){
-                r.classList.remove("selected")
-              }
-            })
-            node.classList.toggle("selected")
-        }
-        if(event.target.id.startsWith("bud")){
-            typesBuildings(parseInt(event.target.id.split("_")[1]))
-            navbar.forEach(r=>{
-              if(r.id.includes("bud")){
-                r.classList.remove("selected")
-              }
-            })
-            node.classList.toggle("selected")
-        }
-       })
-    })
-    updateDisplay()
+  })
+  updateDisplay()
 })
 let i=0;
-setInterval(()=>{
+function defInit() {
+  if(army.max==0)return;
+  defend(Math.floor(Math.min(1.4,Math.max(0.9,Math.random()))*army.total))
+  let ms = (Math.max(0.5,Math.random()*5)) * 60000
+  setTimeout(defInit, ms);
+}
+setTimeout(()=>{
+  defInit()
+},60000)
+setInterval(()=>{ 
 const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0};
 money.income=0;
-b.walls=def.cwalls;
+b.walls=defense.walls;
 technology.income=0;
 const multipliers = {farm: 2,mine: 7, metalwork: 17, workshop: 10, house: -1, barracks: -10, library:-2,hhouse:-2,stoneworks:7,walls:-4}
 const tMultipliers = {library:4}
-if(rs.windmill)multipliers.farm=3;
+if(research.windmill)multipliers.farm=3;
 for(let building in b){
     money.income+=Math.floor((multipliers[building]||0)*(b[building]||0))
     technology.income+=Math.floor((tMultipliers[building]||0)*(b[building]||0))
 }
 technology.income+=technology.invest;
+if(money.total+money.income<0){
+  money.total=0;
+  money.income=0;
+}
 money.income+=Math.floor((population.free+population.working)/10);
 money.total+=money.income;
 population.max=(b.house*25)+(b.hhouse*70);
-technology.total+=rs.library?(technology.income||0):Math.floor((technology.income||0)*1.1)
+army.max=b.barracks*50;
+technology.total+=research.library?(technology.income||0):Math.floor((technology.income||0)*1.1)
 if(i%10==0){
     population.free+=Math.floor(population.max*0.10)
     if(population.free+population.working>population.max){
       population.free=population.max-population.working;
     }
+    army.income=Math.floor(army.max*0.10)
+    if(army.income+army.total>=army.max){
+      army.total=army.max;
+    }else{
+      army.total+=army.income||0;
+    }
 }
 i++;
 updateDisplay()
 },1000)
-function UpdateStorage(){
-  localStorage.getItem("technology")?localStorage.setItem("technology",JSON.stringify(technology)):localStorage.setItem("technology",JSON.stringify({"total":0,"income":0,"invest":0}))
-  localStorage.getItem("buildings")?localStorage.setItem("buildings",JSON.stringify(buildings)):localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalwork":0,"barracks":0}))
-  localStorage.getItem("defense")?localStorage.setItem("defense",JSON.stringify(def)):localStorage.setItem("defense",JSON.stringify({"walls":0,"army":0}))
-  localStorage.getItem("resources")?localStorage.setItem("resources",JSON.stringify(resource)):localStorage.setItem("resources",JSON.stringify({"wains":1,"stone":0}))
-  localStorage.getItem("population")?localStorage.setItem("population",JSON.stringify(population)):localStorage.setItem("population",JSON.stringify({"free":0,"working":0,"max":0}))
-  localStorage.getItem("money")?localStorage.setItem("money",JSON.stringify(money)):localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
-  localStorage.getItem("research")?localStorage.setItem("research",JSON.stringify(rs)):localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false}))
+function UpdateStorage() {
+  const items = ["technology", "buildings", "defense", "resource", "population", "money", "research", "army"];
+  items.forEach(item => {
+    localStorage.getItem(item) ? localStorage.setItem(item, JSON.stringify(eval(item))) : localStorage.setItem(item, JSON.stringify(defaults[item]));
+  });
 }
 function updateDisplay(){
-  document.getElementById("m_total").innerText=`${money.total.toFixed(0)}gl`;
-  document.getElementById("m_income").innerText=`+${money.income.toFixed(0)}gl/day`;
-  document.getElementById("p_current").innerText=(population.free+population.working).toFixed(0);
-  document.getElementById("p_max").innerText=population.max.toFixed(0);
-  document.getElementById("p_income").innerText=(population.free+population.working)==population.max?"+0pops/10 days":`+${Math.floor(population.max*0.10)}pops/10days`
-  document.getElementById("p_free").innerText=`${population.free.toFixed(0)} free pops`;
-  document.getElementById("r_weins").innerText=`${resource.wains.toFixed(0)} ore weins`;
-  document.getElementById("r_ores").innerText=`${resource.stone.toFixed(0)} ores`;
-  document.getElementById("tp_total").innerText=`${technology.total.toFixed(0)}tp`;
-  document.getElementById("tp_income").innerText=`+${technology.income.toFixed(0)}tp/day`;
-  UpdateStorage()
+  const displayItems = [
+    ["m_total", `${money.total.toFixed(0)}gl`],["m_income", `+${money.income.toFixed(0)}gl/day`],
+    ["p_current", (population.free+population.working).toFixed(0)],["p_max", population.max.toFixed(0)],
+    ["p_income", (population.free+population.working)==population.max?"+0pops/10 days":`+${Math.floor(population.max*0.10)}pops/10days`],["p_free", `${population.free.toFixed(0)} free pops`],
+    ["r_weins", `${resource.wains.toFixed(0)} ore weins`],["r_ores", `${resource.stone.toFixed(0)} ores`],
+    ["tp_total", `${technology.total.toFixed(0)}tp`],["tp_income", `+${technology.income.toFixed(0)}tp/day`],
+    ["a_total", `${army.total}`],["a_max", `${army.max}army`],
+    ["a_income", army.total==army.max?"+0army/10days":`+${army.income}army/10days`]
+  ];
+  [...document.getElementsByClassName("b_amount")].map(r=>{
+    r.innerText=(buildings[r.id.split("_")[1]]||defense[r.id.split("_")[1]])||0;
+  })
+  displayItems.forEach(item => document.getElementById(item[0]).innerText = item[1]);
+  UpdateStorage();
 }
 //navigation////////////
 function typesNav(id) {
-    var economy = document.getElementById("economy");
-    var freepops = document.getElementById("p_free");
-    var weins = document.getElementById("r_weins");
-    var ores = document.getElementById("r_ores");
-    var ecoNav = document.getElementById("ecoNav");
-    var technology = document.getElementById("technology");
-    var techpointsNaw= document.getElementById("techpoints");
-    var wafare=document.getElementById("Warfare");
-    var invest=document.getElementById("invest")
-    var complete=document.getElementById("complete")
-    switch(id){
+  ["economy", "p_free", "r_weins", "r_ores", "ecoNav", "technology", "techpoints", "Warfare", "invest", "complete", "army"].forEach(el => document.getElementById(el).style.display = "none");
+  switch(id){
     case 1:
-      economy.style.display = "block";
-      freepops.style.display = "block";
-      weins.style.display = "block";
-      ores.style.display = "block";
-      ecoNav.style.display = "block";
-      technology.style.display = "none";
-      techpointsNaw.style.display = "none";
-      wafare.style.display = "none";
-      invest.style.display = "none";
-      complete.style.display = "none";  
-    break;
+      ["economy", "p_free", "r_weins", "r_ores", "ecoNav"].forEach(el => document.getElementById(el).style.display = "block");
+      break;
     case 2:
-      economy.style.display = "none";
-      freepops.style.display = "none";
-      weins.style.display = "none";
-      ores.style.display = "none";            
-      ecoNav.style.display = "none";
-      technology.style.display = "block";
-      techpointsNaw.style.display = "block";
-      wafare.style.display = "none";
-      invest.style.display = "block";
-      complete.style.display = "block";
-    break;
+      ["technology", "techpoints", "invest", "complete"].forEach(el => document.getElementById(el).style.display = "block");
+      break;
     case 3:
-      economy.style.display = "none";
-      freepops.style.display = "none";
-      weins.style.display = "none";
-      ores.style.display = "none";            
-      ecoNav.style.display = "none";
-      technology.style.display = "none";
-      techpointsNaw.style.display = "none";
-      wafare.style.display = "block";
-      invest.style.display = "none";
-      complete.style.display = "none";
-    break;
-    }
+      ["Warfare", "army"].forEach(el => document.getElementById(el).style.display = "block");
+      break;
+  }
 } 
 //economy
 function typesBuildings(id){
-    var people = document.getElementById("people");
-    var industrial = document.getElementById("industry");
-    var military=document.getElementById("military");
-    switch(id){
-    case 1:
-    people.style.display = "block";
-    industrial.style.display = "none";
-    military.style.display = "none";
-    break;
-    case 2:
-    people.style.display = "none";
-    industrial.style.display = "block";
-    military.style.display = "none";
-    break;
-    case 3:
-    people.style.display = "none";
-    industrial.style.display = "none";
-    military.style.display = "block";
-    break;
-}
+  var types = ["people", "industry", "military"];
+  for (var i = 0; i < types.length; i++) {
+      var display = (id - 1 == i) ? "block" : "none";
+      document.getElementById(types[i]).style.display = display;
+  }
 }
 //buildings////
 /**
  * Buy Building
  * @param {Number} id 
  */
-function buy(id){
+function buy(id) {
+
   const bu = [
     {id:1,name:"house",cost:100,pop:0,category:"buildings"},
     {id:2,name:"library",cost:1000,pop:0,category:"buildings"},
@@ -231,27 +227,20 @@ function buy(id){
     {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings"},
     {id:7,name:"metalwork",cost:1500,pop:40,category:"buildings"},
     {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
-    {id:9,name:"barracks",cost:1500,pop:25,category:"defense"},
-    {id:10,name:"cwalls",cost:4000,pop:0,category:"defense"},
-  ]
-  const building = bu.filter(r=>r.id==id)[0]
-  if(!building)return alert("Invalid id!")
-  if(building.cost>0&&building.cost>money.total)return alert("Not enough money!")
-  if(building.pop>0&&building.pop>population.free)return alert("Not enough free population")
-  if(building.cost!=0){
-    money.total-=building.cost;
+    {id:9,name:"barracks",cost:1500,pop:25,category:"buildings"},
+    {id:10,name:"walls",cost:4000,pop:0,category:"defense"},
+  ];
+  const building = bu.find(r => r.id == id);
+  if (!building) return showModal({header:"Error",body:"Invalid item id."})
+  if (building.cost > money.total || building.pop > population.free) {
+    return showModal({header:"Insufficient funds",body:"Not enough money or free population."})
   }
-  if(building.pop!=0){
-    population.free-=building.pop;
-    population.working+=building.pop;
-  }
-  if(building.category=="buildings"){
-    buildings[building.name]+=1;
-  }
-  if(building.category=="defense"){
-    def[building.name]+=1;
-  }
-  updateDisplay()
+  money.total -= building.cost;
+  population.free -= building.pop;
+  population.working += building.pop;
+  if (building.category == "buildings") buildings[building.name]++;
+  if (building.category == "defense") defense[building.name]++;
+  updateDisplay();
 }
 function Demolish(id){
   const bu = [
@@ -263,120 +252,123 @@ function Demolish(id){
     {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings"},
     {id:7,name:"metalwork",cost:1500,pop:40,category:"buildings"},
     {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
-    {id:9,name:"barracks",cost:1500,pop:25,category:"defense"},
-    {id:10,name:"cwalls",cost:4000,pop:0,category:"defense"},
+    {id:9,name:"barracks",cost:1500,pop:25,category:"buildings"},
+    {id:10,name:"walls",cost:4000,pop:0,category:"defense"},
   ]
-  const building = bu.filter(r=>r.id==id)[0]
-  if(!building)return alert("Invalid id")
-  if(buildings[building.name]==0)return;
-  money.total+=building.cost*0.4
-  population.working-=building.pop*0.4;
-  population.free+=building.pop*0.4;
+  const building = bu.find(r => r.id == id);
+  if (!building) return showModal({header:"Error",body:"Invalid item id"})
+  if(building.category=="buildings"&&buildings[building.name]==0)return showModal({header:"Error",body:"You must have at least 1 of a building to demolish it"});
+  if(building.category=="defense"&&defense[building.name]==0)return showModal({header:"Error",body:"You must have at least 1 of a building to demolish it"});
+  money.total += building.cost * 0.4;
+  population.working -= building.pop * 0.4;
+  population.free += building.pop * 0.4;
   if(building.category=="buildings"){
     buildings[building.name]-=1;
   }
   if(building.category=="defense"){
-    def[building]-=1;
+    defense[building.name]-=1;
   }
-  updateDisplay()
+  updateDisplay();
 }
-//warfare//////////////////////////////
-// let modDef=0.1;
-// let destruction;
-// let timeUntilAttack=Math.random()*999999999999+60000;
-// let straty;
-/*
-setInterval(() => {
-  alert('You have been atacked!');
-  defense(Math.random()*(100));
-}, timeUntilAttack);
-*/
 /**
+ * Starts a defense
  * @param {Number} armiaW liczebność armi wroga
  */
-function defense(armiaW){
-// let straty;
-// if(def.army*modDef>armiaW){
-// straty=def.army*(random()* (0.50 - 0.10) + 0.10)-(def.army*modDef);
-// armia-=straty;
-// alert("You were victorius, you lost "+straty+" army");
-// }
-// else{
-//   straty=armia*(Math.random()* (0.90 - 0.50) + 0.40)-(def.army*modDef);
-//   if(straty>=def.army){
-//   def.army=0;
-//   }
-//   else{
-//   def.army-=straty;
-//   }
-//     income-=(straty*(armiaW/10));
-// alert("You were defeted, you lost "+straty+" army and "+(straty*armiaW/10)+" Gl ");
-// }
+function defend(armiaW) {
+  let straty = Math.floor(Math.max(army.max* 0.1, Math.random() * army.max));
+  if (army.total * army.mod > armiaW) {
+    if (straty >= army.total) straty = Math.floor(Math.min(1,Math.max(0.7,Math.random()))*army.total);
+    army.total-=straty;
+    showModal({header:"Defense",body:"You defended against an enemy attack, but lost "+straty+" soldiers."})
+  } else {
+    if (straty >= army.total) {
+      army.total = 0;
+    } else {
+      army.total -= straty;
+    }
+    let mloss = Math.floor(straty * (armiaW / 10));
+    if (mloss >= money.total) {
+      money.total = 0;
+    } else {
+      money.total -= mloss;
+    }
+    showModal({header:"Defense",body:"You were pillaged! the enemy killed "+straty+" of your soldiers and stole "+mloss+"Gl."})
+  }
+  updateDisplay();
 }
 /**
+ * Starts a war
  * @param {Number} defArmy
- * @param {Number} derArmyMod
+ * @param {Number} defArmyMod
  */
-function atack(defArmy,defArmyMod){
-// if(armi>defArmy*defArmyMod){
-//   straty=armia*(Math.random()* (0.30 - 0.10) + 0.10);
-//   money=Math.random()*(3000-1000)+1000;
-// income+=money;
-// alert("You were victorius, you lost "+straty+" army and get "+money+"Gl");
-// }else{
-//   straty=armia*(Math.random()* (0.90 - 0.30) + 0.30)+defArmy*defArmyMod/2;
-//   armia-=straty;
-// alert("You were defeted, you lost "+straty+" army");
-// }
+function atack(defArmy,defArmyMod) {
+  let straty,m,message;
+  if(defArmy*defArmyMod>army.total*army.mod){
+    straty = army.total;
+    m=0;
+    message = `You were defeated, you lost ${straty} soldiers`;
+  }else{
+    straty = Math.floor(Math.min(0.5,Math.max(1,Math.random()*2))*(defArmy*defArmyMod))
+    m=Math.floor(Math.max(1000,Math.min(3000,Math.random()*4000)));
+    message=`You were victorious, you lost ${straty} soldiers, but got ${m} Gl`
+  }
+  army.total -= straty;
+  money.total += m;
+  showModal({header:"Attack",body:message,footer:`Enemy army size: ${Math.floor(defArmy*defArmyMod)}(x${defArmyMod})`})
 }
 //techs///////
-function invest(){
-    if(money.total>=250){
-      technology.invest+=1;
-      technology.income+=1;
-      money.total-=250;
-    }else{
-      alert("Not enought money my King, you need at least "+250+"Gl")
-    }
-    updateDisplay()
+function invest() {
+  if (money.total < Math.floor(250*(technology.invest*1.0025))) return showModal({header:"Insufficient funds",body:`You need at least ${Math.floor(250*(technology.invest*1.0025))} gold to invest.`})
+  money.total -= Math.floor(250*(technology.invest*1.0025));
+  technology.invest++;
+  technology.income++;
+  updateDisplay();
 }
 /**
  * @param {Number} id
  */
-function research(id){
+function researchItem(id){
   const researches = [
     {name:"mine",cost:100},
     {name:"library",cost:300,TP_bonus:0.1},
     {name:"metalwork",cost:600,modDef:0.1},
-    {name:"windmill",cost:900,FarmUpgrade:1},
+    {name:"windmill",cost:900,FarmUpgrade:1,x:true},
     {name:"hhouse",cost:1500},
     {name:"stoneworks",cost:600},
     {name:"cwalls",cost:2000},
+    {name:"buymulti",cost:5000,x:true}
   ]
   const item = researches[id-1]
-  if(!item)return alert("Invalid id")
-  if(rs[item.name]){
-    if(item.name!="windmill")document.getElementById(item.name).style.display = "none";
-    return; 
+  if(!item) return showModal({header:"Error",body:"Invalid research id"})
+  if(research[item.name]) return item.x ? null : document.getElementById(item.name).style.display = "none"
+  if(technology.total < item.cost) return showModal({header:"Insufficient funds",body:"You don't have enough techpoints."})
+  if(!item.x) document.getElementById(item.name).style.display="block"
+  document.getElementById("r_" + item.name).style.display = "none"
+  technology.income += item.TP_bonus || 0
+  army.mod += item.modDef || 0
+  research[item.name] = true
+  if(item.name=="windmill"){
+    document.getElementById("r_hhouse").style.display="block";
   }
-  if(technology.total>=item.cost){
-    if(item.name!="windmill"){
-      document.getElementById(item.name).style.display="block";
-    }
-    document.getElementById("r_"+item.name).style.display = "none";
-    technology.income+=item.TP_bonus||0;
-    //modDef+=item.modDef||0;
-    rs[item.name]=true;
-  }else{
-    alert("Not enough tech points")
+  if(item.name=="stoneworks"){
+    document.getElementById("r_cwalls").style.display= "block";
   }
-  const t_options = document.querySelectorAll(".t_option")
-  let j = 0;
-  t_options.forEach(r=>{
-    if(r.style.display!="none")j=1;
-  })
-  if(j==0){
-    document.getElementById("complete").innerText="All research complete";
+  if (![...document.querySelectorAll(".t_option")].some(r => r.style.display !== "none")) {
+    document.getElementById("complete").innerText = "All research complete";
   }
   updateDisplay()
+}
+/**
+ * 
+ * @param {{header:String,body:String,footer:String}} data 
+ */
+function showModal(data){
+  const modal = document.getElementById("myModal")
+  document.getElementById("modal-header").innerHTML=data.header||"";
+  document.getElementById("modal-body").innerHTML=data.body||"";
+  document.getElementById("modal-footer").innerHTML=data.footer||"";
+  modal.style.display="block";
+}
+function closeModal(){
+  document.getElementById("myModal").style.display="none";
 }
