@@ -5,13 +5,14 @@ body{
 }
 /*navigation*/
 #m_income,#tp_income,#p_income,#a_income{
-    color:#706a6a;
+    font-weight: bold;
+    color:#999393;
 }
 .highlight{
     color:rgb(221, 216, 186)
 }
 .tp_cost{
-    color:#706a6a;
+    color:#8b8484;
 }
 #info{
     width: 40%;
@@ -33,7 +34,6 @@ body{
     padding: 0;
     overflow: hidden;
     background-color: #333333;
-    margin-bottom: 10px;
 }
 ul{
     list-style-type: none;
@@ -171,4 +171,14 @@ input:disabled:hover{
 .modal-footer {
     padding: 2px 16px;
     color: white;
+}
+#info{
+    position: relative;
+    display:grid ;
+}
+#main{
+    padding: 5px;
+    background-color: rgba(42, 40, 40, 0.6);
+    position: absolute;
+    border-radius: 15px;
 }
