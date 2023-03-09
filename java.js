@@ -1,11 +1,11 @@
 const defaults = {
   technology:{total:0,income:0,invest:0},
-  buildings:{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0},
-  defense:{walls:0},
+  buildings:{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0,manufactures:0},
+  defense:{walls:0,starfortres:0},
   resource:{wains:1,stone:0},
   population:{working:40,free:10,max:0},
   money:{total:0,income:0},
-  research:{mine:false,library:false,metalwork:false,windmill:false,hhouse:false,stoneworks:false,cwalls:false,buymulti:false},
+  research:{mine:false,library:false,metalwork:false,windmill:false,hhouse:false,stoneworks:false,cwalls:false,buymulti:false,manufactures:false,gunpowder:false,firearms :false,canons:false,starfortres:false},
   army:{total:0,income:0,mod:1}
 }
 /**
@@ -34,8 +34,8 @@ let buildings = localStorage.getItem("buildings");
 if(buildings){
 buildings = JSON.parse(buildings)
 }else{
-  buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0}
-  localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshop":0,"mine":0,"metalwork":0,"barracks":0}))
+  buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0,manufactures:0}
+  localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshop":0,"mine":0,"metalwork":0,"barracks":0,"manufactures":0}))
 }
 /**
  * @type {{walls:Number}}
@@ -44,8 +44,8 @@ let defense = localStorage.getItem("defense")
 if(defense){
   defense=JSON.parse(defense)
 }else{
-  defense={walls:0}
-  localStorage.setItem("defense",JSON.stringify({"walls":0}))
+  defense={walls:0,starfortres:0}
+  localStorage.setItem("defense",JSON.stringify({"walls":0,"starfortres":0}))
 }
 /**
  * @type {{wains:Number,stone:Number}}
@@ -78,14 +78,14 @@ if(money){
   localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
 }
 /**
- * @type {{"mine":Boolean,"library":Boolean,"metalwork":Boolean,"windmill":Boolean,"hhouse":Boolean,"stoneworks":Boolean,"cwalls":Boolean,"buymulti":Boolean}}
+ * @type {{"mine":Boolean,"library":Boolean,"metalwork":Boolean,"windmill":Boolean,"hhouse":Boolean,"stoneworks":Boolean,"cwalls":Boolean,"buymulti":Boolean,"manufactures":Boolean,"gunpowder":Boolean,"firearms" :Boolean,"canons":Boolean,"starfortres":Boolean}}
  */
 let research = localStorage.getItem("research")
 if(research){
   research = JSON.parse(research)
 }else{
-  research = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}
-  localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}))
+  research = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false,"manufactures":false,"gunpowder":false,"firearms" :false,"canons":false,"starfortres":false}
+  localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false,"manufactures":false,"gunpowder":false,"firearms" :false,"canons":false,"starfortres":false}))
 }
 /**
  * @type {{"total":Number,"income":Number,"mod":Number}}
@@ -171,11 +171,11 @@ setTimeout(()=>{
   defInit()
 },60000)
 setInterval(()=>{ 
-const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0};
+const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0,manufactures:0};
 money.income=0;
 b.walls=defense.walls;
 technology.income=0;
-const multipliers = {farm: 2,mine: 7, metalwork: 17, workshop: 10, house: -1, barracks: -10, library:-2,hhouse:-2,stoneworks:7,walls:-4}
+const multipliers = {farm: 2,mine: 7, metalwork: 17, workshop: 10, house: -1, barracks: -10, library:-2,hhouse:-2,stoneworks:7,walls:-4,manufactures:40}
 const tMultipliers = {library:4}
 if(research.windmill)multipliers.farm=3;
 for(let building in b){
@@ -270,6 +270,8 @@ function buy(id) {
     {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
     {id:9,name:"barracks",cost:1500,pop:25,category:"buildings"},
     {id:10,name:"walls",cost:4000,pop:0,category:"defense",stone:1},
+    {id:11,name:"manufactures",cost:5000,pop:40,category:"buildings"},
+    {id:12,name:"starfortres",cost:20000,pop:200,category:"defense",stone:2},
   ];
   const building = bu.find(r => r.id == id);
   if (!building) return showModal({header:"Error",body:"Invalid item id."})
@@ -303,6 +305,8 @@ function Demolish(id){
     {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
     {id:9,name:"barracks",cost:1500,pop:25,category:"buildings"},
     {id:10,name:"walls",cost:4000,pop:0,category:"defense"},
+    {id:11,name:"manufactures",cost:5000,pop:40,category:"buildings"},
+    {id:12,name:"starfortres",cost:20000,pop:200,category:"defense",stone:2},
   ]
   const building = bu.find(r => r.id == id);
   if (!building) return showModal({header:"Error",body:"Invalid item id"})
@@ -393,7 +397,12 @@ function researchItem(id){
     {name:"hhouse",cost:1500},
     {name:"stoneworks",cost:600},
     {name:"cwalls",cost:2000},
-    {name:"buymulti",cost:5000,x:true}
+    {name:"buymulti",cost:5000,x:true},
+    {name:"gunpowder",cost:30000,modDef:0.1},
+    {name:"firearms",cost:20000,modDef:0.1},
+    {name:"canons",cost:20000,modDef:0.2},
+    {name:"starfortres",cost:100000},
+    {name:"manufactures",cost:3000}
   ]
   const item = researches[id-1]
   if(!item) return showModal({header:"Error",body:"Invalid research id"})
@@ -411,8 +420,14 @@ function researchItem(id){
   if(item.name=="stoneworks"){
     document.getElementById("r_cwalls").style.display= "block";
   }
+  if(item.name=="gunpowder"){
+    document.getElementById("r_cwalls").style.display= "block";
+  }
   if (![...document.querySelectorAll(".t_option")].some(r => r.style.display !== "none")) {
     document.getElementById("complete").innerText = "All research complete";
+  }
+  if(document.getElementById("gunpowder").style.display == "none"&&document.getElementById(canons).style.display == "none"&&document.getElementById(gunpowder).style.display == "none"){
+    document.getElementById("starfortres").style.display == "block";
   }
   technology.total-=item.cost;
   updateDisplay()
