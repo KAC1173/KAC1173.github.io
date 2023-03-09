@@ -379,12 +379,12 @@ window.addEventListener("load",()=>{
             if(adventure.prize){
                 let prize = adventure.prize[Math.floor(Math.random()*adventure.prize.length)]
                 if(["gold","stone","technology"].includes(prize.type)){
-                    details[Math.max(24,Math.min(26,Math.random()*30))][Math.floor(Math.random()*144)]={type:"chest",id:0}
+                    details[Math.max(24,Math.min(26,Math.random()*30))][Math.floor(Math.random()*125)]={type:"chest",id:0}
                 }
             }
         }
         if(adventure.name=="Find villager"){
-            new Player(0).draw(Math.floor(Math.max(23,Math.min(26,Math.random()*30))),Math.floor(Math.random()*144))
+            new Player(0).draw(Math.floor(Math.max(23,Math.min(26,Math.random()*30))),Math.floor(Math.random()*125))
         }
         /**
          * @type {HTMLCanvasElement}
