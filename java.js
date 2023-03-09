@@ -1,6 +1,6 @@
 const defaults = {
   technology:{total:0,income:0,invest:0},
-  buildings:{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0},
+  buildings:{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0},
   defense:{walls:0},
   resource:{wains:1,stone:0},
   population:{working:40,free:10,max:0},
@@ -17,6 +17,9 @@ function checkCooldown(){
 function updateCooldown(){
   return localStorage.setItem("cooldown",Date.now())
 }
+/**
+ * @type {{total:Number,income:Number,invest:Number}}
+ */
 let technology = localStorage.getItem("technology")
 if(technology){
   technology = JSON.parse(technology)
@@ -24,13 +27,19 @@ if(technology){
   technology = {total:0,income:0,invest:0}
   localStorage.setItem("technology",JSON.stringify({"total":0,"income":0,"invest":0}))
 }
+/**
+ * @type {{house:Number,hhouse:Number,library:Number,farm:Number,stoneworks:Number,workshop:Number,mine:Number,metalwork:Number,barracks:Number}}
+ */
 let buildings = localStorage.getItem("buildings");
 if(buildings){
 buildings = JSON.parse(buildings)
 }else{
-  buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0}
-  localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshops":0,"mine":0,"metalwork":0,"barracks":0}))
+  buildings = {house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0}
+  localStorage.setItem("buildings",JSON.stringify({"house":3,"hhouse":0,"library":0,"farm":2,"stoneworks":0,"workshop":0,"mine":0,"metalwork":0,"barracks":0}))
 }
+/**
+ * @type {{walls:Number}}
+ */
 let defense = localStorage.getItem("defense")
 if(defense){
   defense=JSON.parse(defense)
@@ -38,6 +47,9 @@ if(defense){
   defense={walls:0}
   localStorage.setItem("defense",JSON.stringify({"walls":0}))
 }
+/**
+ * @type {{wains:Number,stone:Number}}
+ */
 let resource = localStorage.getItem("resources")
 if(resource){
   resource=JSON.parse(resource)
@@ -45,6 +57,9 @@ if(resource){
   resource={wains:1,stone:0}
   localStorage.setItem("resource",JSON.stringify({"wains":1,"stone":0}))
 }
+/**
+ * @type {{working:Number,free:Number,max:Number}}
+ */
 let population = localStorage.getItem("population")
 if(population){
   population = JSON.parse(population)
@@ -52,6 +67,9 @@ if(population){
   population = {working:40,free:10,max:0}
   localStorage.setItem("population",JSON.stringify({"working":0,"free":0,"max":0}))
 }
+/**
+ * @type {{"total":Number,"income":Number}}
+ */
 let money = localStorage.getItem("money")
 if(money){
   money = JSON.parse(money)
@@ -59,6 +77,9 @@ if(money){
   money = {"total":0,"income":0}
   localStorage.setItem("money",JSON.stringify({"total":0,"income":0}))
 }
+/**
+ * @type {{"mine":Boolean,"library":Boolean,"metalwork":Boolean,"windmill":Boolean,"hhouse":Boolean,"stoneworks":Boolean,"cwalls":Boolean,"buymulti":Boolean}}
+ */
 let research = localStorage.getItem("research")
 if(research){
   research = JSON.parse(research)
@@ -66,6 +87,9 @@ if(research){
   research = {"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}
   localStorage.setItem("research",JSON.stringify({"mine":false,"library":false,"metalwork":false,"windmill":false,"hhouse":false,"stoneworks":false,"cwalls":false,"buymulti":false}))
 }
+/**
+ * @type {{"total":Number,"income":Number,"mod":Number}}
+ */
 let army = localStorage.getItem("army")
 if(army){
   army=JSON.parse(army)
@@ -75,6 +99,9 @@ if(army){
 }
 army.mod=1;
 window.addEventListener("load",(event)=>{
+  document.getElementById("explore").addEventListener("click",()=>{
+    explore();
+  })
   document.getElementById("closeModal").addEventListener("click",()=>{
     closeModal()
   })
@@ -92,7 +119,7 @@ window.addEventListener("load",(event)=>{
     document.getElementById("r_buymulti").style.display="block";
   }
   for(let reso in research){
-    if(reso!="windmill" && research[reso]){
+    if(!["windmill","buymulti","wains"].includes(reso) && research[reso]){
       let a = document.getElementById(reso).style.display = "block";
     }
   }
@@ -144,7 +171,7 @@ setTimeout(()=>{
   defInit()
 },60000)
 setInterval(()=>{ 
-const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshops:0,mine:0,metalwork:0,barracks:0};
+const b=JSON.parse(localStorage.getItem("buildings"))||{house:3,hhouse:0,library:0,farm:2,stoneworks:0,workshop:0,mine:0,metalwork:0,barracks:0};
 money.income=0;
 b.walls=defense.walls;
 technology.income=0;
@@ -204,7 +231,7 @@ function updateDisplay(){
 }
 //navigation////////////
 function typesNav(id) {
-  ["economy", "p_free", "r_weins", "r_ores", "ecoNav", "technology", "techpoints", "Warfare", "invest", "complete", "army"].forEach(el => document.getElementById(el).style.display = "none");
+  ["economy", "p_free", "r_weins", "r_ores", "ecoNav", "technology", "techpoints", "invest", "complete", "army","eDisplay"].forEach(el =>{document.getElementById(el).style.display = "none"});
   switch(id){
     case 1:
       ["economy", "p_free", "r_weins", "r_ores", "ecoNav"].forEach(el => document.getElementById(el).style.display = "block");
@@ -213,7 +240,7 @@ function typesNav(id) {
       ["technology", "techpoints", "invest", "complete"].forEach(el => document.getElementById(el).style.display = "block");
       break;
     case 3:
-      ["Warfare", "army"].forEach(el => document.getElementById(el).style.display = "block");
+      ["army","eDisplay"].forEach(el => document.getElementById(el).style.display = "block");
       break;
   }
 } 
@@ -238,17 +265,25 @@ function buy(id) {
     {id:3,name:"hhouse",cost:200,pop:0,category:"buildings"},
     {id:4,name:"farm",cost:200,pop:20,category:"buildings"},
     {id:5,name:"mine",cost:500,pop:50,category:"buildings"},
-    {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings"},
+    {id:6,name:"stoneworks",cost:2250,pop:0,category:"buildings",stoneWein:1},
     {id:7,name:"metalwork",cost:1500,pop:40,category:"buildings"},
     {id:8,name:"workshop",cost:1000,pop:30,category:"buildings"},
     {id:9,name:"barracks",cost:1500,pop:25,category:"buildings"},
-    {id:10,name:"walls",cost:4000,pop:0,category:"defense"},
+    {id:10,name:"walls",cost:4000,pop:0,category:"defense",stone:1},
   ];
   const building = bu.find(r => r.id == id);
   if (!building) return showModal({header:"Error",body:"Invalid item id."})
-  if (building.cost > money.total || building.pop > population.free) {
+  if (building.cost > money.total || (building.pop > population.free)&&building.pop>0) {
     return showModal({header:"Insufficient funds",body:"Not enough money or free population."})
   }
+  if(building.stone&&building.stone>resource.stone){
+    return showModal({header:"Missing resources",body:"Not enough stone"})
+  }
+  if(building.stoneWein&&building.stoneWein>resource.wains){
+    return showModal({header:"Error",body:"You need a stone wein to build this building."})
+  }
+  resource.stone-=building.stone||0;
+  resource.wains-=building.stoneWein||0;
   money.total -= building.cost;
   population.free -= building.pop;
   population.working += building.pop;
@@ -281,6 +316,12 @@ function Demolish(id){
   }
   if(building.category=="defense"){
     defense[building.name]-=1;
+  }
+  if(building.name=="stoneworks"){
+    resource.wains++;
+  }
+  if(building.name=="walls"){
+    resource.stone+=0.4;
   }
   updateDisplay();
 }
@@ -365,6 +406,7 @@ function researchItem(id){
   research[item.name] = true
   if(item.name=="windmill"){
     document.getElementById("r_hhouse").style.display="block";
+    document.getElementById("f_income").innerText=4;
   }
   if(item.name=="stoneworks"){
     document.getElementById("r_cwalls").style.display= "block";
@@ -372,6 +414,7 @@ function researchItem(id){
   if (![...document.querySelectorAll(".t_option")].some(r => r.style.display !== "none")) {
     document.getElementById("complete").innerText = "All research complete";
   }
+  technology.total-=item.cost;
   updateDisplay()
 }
 /**
@@ -388,3 +431,26 @@ function showModal(data){
 function closeModal(){
   document.getElementById("myModal").style.display="none";
 }
+/**
+ * 
+ * @param {Array} items 
+ * @param {Array.<Number>} weights 
+ * @returns {any}
+ */
+function weightedRandom(items,weights) {
+  const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
+  const randomWeight = Math.random() * totalWeight;
+  let weightSum = 0;
+  for (let i = 0; i < weights.length; i++) {
+    weightSum += weights[i];
+    if (randomWeight < weightSum) {
+      return items[i];
+    }
+  }
+}
+const adventures = [
+  {name:"Find chest",prize:[{type:"gold",amount:{min:100,max:1500}},{type:"stone",amount:{min:1,max:20}},{type:"technology",amount:{min:10,max:200}}]},
+  {name:"Find villager",prize:[{type:"population",amount:{min:1,max:10}}]},
+  {name:"Find stone wein",prize:[{type:"resource",amount:{min:1,max:1}}]},
+  {name:"Get ambushed",loss:[{type:"army",amount:{min:0,max:5}},{type:"gold",amount:{min:15,max:500}}]}
+]

@@ -33,15 +33,18 @@
   </div>
 </div>
 <div id="info">
-  <div id="money" class="InfAll"><span id="m_total">0</span> <span id="m_income">0</span></div> <!-- Zawsze widoczne -->
-  <div id="population" class="InfAll"><span id="p_current"></span>/<span id="p_max">0</span>pops <span id="p_income">0</span></div><!--zawsze widoczne-->
-  <div id="p_free" class="InfEco">0 freepops</div><!--economy-->
-  <div id="r_weins"  class="InfEco">0 resorse weins</div> <!--economy-->
-  <div id="r_ores"  class="InfEco">0 ores</div><!--economy-->
-  <div id="techpoints"  class="InfTech" style="display:none;"><span id="tp_total">0 Techpoints</span> <span id="tp_income">0 Techpoints per day</span><input id="invest" type="button" class="InfTech" value="invest"onClick="invest()" style="display: none;"></div>  <!--tech-->
-  <div id="army" class="InfWar" style="display: none;"><span id="a_total">0</span>/<span id="a_max">0</span> <span id="a_income"></span></div>
-   <!-- tech invest-->
-  <!--<div id="terain"  class="InfWar"style="display:none;"></div><!--warfare-->
+  <canvas id="eDisplay" style="display: none;" width="1600" height="800"></canvas>
+  <div id="main">
+    <div id="money" class="InfAll"><span id="m_total">0</span> <span id="m_income">0</span></div> <!-- Zawsze widoczne -->
+    <div id="population" class="InfAll"><span id="p_current"></span>/<span id="p_max">0</span>pops <span id="p_income">0</span></div><!--zawsze widoczne-->
+    <div id="p_free" class="InfEco">0 freepops</div><!--economy-->
+    <div id="r_weins"  class="InfEco">0 resorse weins</div> <!--economy-->
+    <div id="r_ores"  class="InfEco">0 ores</div><!--economy-->
+    <div id="techpoints"  class="InfTech" style="display:none;"><span id="tp_total">0 Techpoints</span> <span id="tp_income">0 Techpoints per day</span><input id="invest" type="button" class="InfTech" value="invest"onClick="invest()" style="display: none;"></div>  <!--tech-->
+    <div id="army" class="InfWar" style="display: none;"><span id="a_total">0</span>/<span id="a_max">0</span> <span id="a_income"></span></div>
+    <input type="button" value="Attack village" style="clear: both;float: left;display: none;" id="attack">
+    <input type="button" value="Explore" style="clear: both; float: left;display: none;" id="explore">
+  </div>
 </div>
 <!--------------------Economy-------------------->
 <div id="economy" class="type">
@@ -176,11 +179,10 @@
     </div>
   </div>
 </div>
-<div id="Warfare"style="display:none;">
-  <input type="button" value="Attack village" style="clear: both;float: left;" id="attack">
-  <input type="button" value="Explore" style="clear: both; float: left;" id="explore" disabled>
 </div>
 </div>
 </body>
+<script src="astar.js"></script>
 <script src="./java.js"></script>
+<script src="animations.js"></script>
 </html>
